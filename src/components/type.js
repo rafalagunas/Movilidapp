@@ -7,7 +7,7 @@ import {
   TouchableOpacity
 } from "react-native";
 
-class Login extends Component {
+class Transport extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,45 +27,44 @@ class Login extends Component {
     };
   }
   static navigationOptions = {
-    header: null
+    title: "Tipo de transporte"
   };
-  registerMe = () => {
-    this.props.navigation.navigate("Register");
+  taxiSection = () => {
+    this.props.navigation.navigate("Taxi");
   };
+
+  busSection = () => {
+    this.props.navigation.navigate("Bus");
+  };
+
+  vanSection = () => {
+    this.props.navigation.navigate("Van");
+  };
+
   render() {
     const { navigate } = this.props.navigation;
 
     return (
       <View style={styles.container}>
-        <Text style={styles.title}> LOGIN MOVILIDAPP</Text>
-        <View style={styles.formContainer}>
-          <TextInput
-            style={styles.inputText}
-            onChangeText={text => this.setState({ number: text })}
-            underlineColorAndroid="#FFF"
-            placeholder="Número"
-          />
-          <TextInput
-            style={styles.inputText}
-            onChangeText={text => this.setState({ number: text })}
-            underlineColorAndroid="#FFF"
-            placeholder="Contraseña"
-          />
-        </View>
+        <Text style={styles.title}> ¿USTED VA EN?</Text>
         <View style={styles.buttonDiv}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => this.registerMe()}
+            onPress={() => this.taxiSection()}
           >
-            <Text style={styles.buttonText}>¡INICIAR SESIÓN!</Text>
+            <Text style={styles.buttonText}>TAXI</Text>
           </TouchableOpacity>
-        </View>
-        <View style={styles.secondButtonDiv}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => this.registerMe()}
+            onPress={() => this.busSection()}
           >
-            <Text style={styles.buttonText}>¡REGISTRARME!</Text>
+            <Text style={styles.buttonText}>CAMIÓN</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => this.vanSection()}
+          >
+            <Text style={styles.buttonText}>VAN</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -73,7 +72,7 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default Transport;
 
 const styles = StyleSheet.create({
   container: {
@@ -95,7 +94,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   formContainer: {
-    marginTop: "30%",
+    marginTop: "10%",
     width: "100%",
     justifyContent: "center"
   },
@@ -114,16 +113,23 @@ const styles = StyleSheet.create({
     borderColor: "#000"
   },
   buttonDiv: {
-    marginTop: "5%"
-  },
-  secondButtonDiv: {
-    marginTop: "2%"
+    marginTop: "15%",
+    width: "100%",
+    justifyContent: "center"
   },
   button: {
+    marginTop: "3%",
     backgroundColor: "#000",
+    padding: 35,
+    width: "50%",
+    alignSelf: "center",
     justifyContent: "center",
-    padding: 15,
     borderRadius: 10
   },
-  buttonText: { color: "#FFF", fontSize: 20, fontWeight: "bold" }
+  buttonText: {
+    color: "#FFF",
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center"
+  }
 });
