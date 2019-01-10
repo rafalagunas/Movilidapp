@@ -4,7 +4,9 @@ import {
   View,
   TextInput,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  AsyncStorage,
+  Alert
 } from "react-native";
 
 class Login extends Component {
@@ -12,29 +14,58 @@ class Login extends Component {
     super(props);
     this.state = {
       number: "",
-      pass: "",
-      name: "",
-      nick_one: "",
-      ref_one: "",
-      nick_two: "",
-      ref_two: "",
-      nick_three: "",
-      ref_three: "",
-      nick_four: "",
-      ref_four: "",
-      nick_five: "",
-      ref_five: ""
+      pass: ""
     };
   }
+  componentDidMount = async () => {
+    AsyncStorage.removeItem("actualUser");
+    // let actual = await AsyncStorage.getItem("actualUser");
+    //  alert(actual);
+  };
+
   static navigationOptions = {
     header: null
   };
   registerMe = () => {
+    AsyncStorage.removeItem("actualUser");
     this.props.navigation.navigate("Register");
+  };
+
+  login = () => {
+    AsyncStorage.removeItem("actualUser");
+    let phone = this.state.number;
+
+    this.returnData(phone);
+  };
+
+  returnData = async phone => {
+    try {
+      let response = await AsyncStorage.getItem(phone);
+
+      if (response) {
+        let response_parsed = JSON.parse(response);
+
+        if (response_parsed.pass === this.state.pass) {
+          AsyncStorage.setItem("actualUser", response_parsed.phone);
+          // let actualUser = await AsyncStorage.getItem("actualUser");
+          this.props.navigation.navigate("Type");
+        } else {
+          Alert.alert(
+            "ERROR",
+            "USUARIO O CONTRASEÑA NO COINCIDEN O NO EXISTEN "
+          );
+        }
+      } else {
+        Alert.alert("ERROR", "USUARIO O CONTRASEÑA NO COINCIDEN O NO EXISTEN ");
+      }
+    } catch (error) {
+      alert(error);
+    }
   };
   render() {
     const { navigate } = this.props.navigation;
 
+    AsyncStorage.removeItem("actualUser");
     return (
       <View style={styles.container}>
         <Text style={styles.title}> LOGIN MOVILIDAPP</Text>
@@ -43,20 +74,20 @@ class Login extends Component {
             style={styles.inputText}
             onChangeText={text => this.setState({ number: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="phone-pad"
             placeholder="Número"
+            maxLength={10}
           />
           <TextInput
             style={styles.inputText}
-            onChangeText={text => this.setState({ number: text })}
+            onChangeText={text => this.setState({ pass: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="visible-password"
             placeholder="Contraseña"
           />
         </View>
         <View style={styles.buttonDiv}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => this.registerMe()}
-          >
+          <TouchableOpacity style={styles.button} onPress={() => this.login()}>
             <Text style={styles.buttonText}>¡INICIAR SESIÓN!</Text>
           </TouchableOpacity>
         </View>

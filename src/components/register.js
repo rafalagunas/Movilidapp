@@ -4,7 +4,9 @@ import {
   View,
   TextInput,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  AsyncStorage,
+  Alert
 } from "react-native";
 
 class Register extends Component {
@@ -30,7 +32,66 @@ class Register extends Component {
     title: "Registro"
   };
   registerMe = () => {
-    this.props.navigation.navigate("Type");
+    let phone = this.state.number;
+    let password = this.state.pass;
+    let name = this.state.name;
+    let reference_one = this.state.ref_one;
+    let reference_two = this.state.ref_two;
+    let reference_three = this.state.ref_three;
+    let reference_four = this.state.ref_four;
+    let reference_five = this.state.ref_five;
+
+    const user = {
+      phone: phone,
+      name: name,
+      pass: password,
+      ref_one: reference_one,
+      ref_two: reference_two,
+      ref_three: reference_three,
+      ref_four: reference_four,
+      ref_five: reference_five
+    };
+    AsyncStorage.removeItem(phone);
+    let users = AsyncStorage.setItem(phone, JSON.stringify(user));
+
+    //this.props.navigation.navigate("Type");
+    if (reference_one) {
+      fetch("https://coderscave-prueba.000webhostapp.com/save-account.php", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "text/html"
+        },
+        body: JSON.stringify({
+          number: phone,
+          pass: password,
+          ref_one: reference_one,
+          ref_two: reference_two,
+          ref_three: reference_three,
+          ref_four: reference_four,
+          ref_five: reference_five
+        })
+      })
+        .then(response => response.json())
+        .catch(e => {
+          throw e;
+        });
+
+      this.returnData(users);
+    } else {
+      Alert.alert("ERROR", "COMPLETA TODOS LOS CAMPOS");
+    }
+  };
+
+  returnData = async () => {
+    let phone = this.state.number;
+    try {
+      let users = await AsyncStorage.getItem(phone);
+      alert(users);
+      this.props.navigation.navigate("Home");
+    } catch (error) {
+      alert(error);
+    }
   };
   render() {
     const { navigate } = this.props.navigation;
@@ -43,83 +104,101 @@ class Register extends Component {
             style={styles.inputText}
             onChangeText={text => this.setState({ number: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="phone-pad"
             placeholder="Número"
+            maxLength={10}
           />
           <TextInput
             style={styles.inputText}
-            onChangeText={text => this.setState({ number: text })}
+            onChangeText={text => this.setState({ pass: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="visible-password"
             placeholder="Contraseña"
           />
         </View>
         <View style={styles.rowContainer}>
           <TextInput
             style={styles.rowInput}
-            onChangeText={text => this.setState({ number: text })}
+            onChangeText={text => this.setState({ nick_one: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="default"
             placeholder="Apodo referencia"
           />
           <TextInput
             style={styles.rowInput}
-            onChangeText={text => this.setState({ number: text })}
+            onChangeText={text => this.setState({ ref_one: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="phone-pad"
             placeholder="Número de referencia"
+            maxLength={10}
           />
         </View>
         <View style={styles.rowContainer}>
           <TextInput
             style={styles.rowInput}
-            onChangeText={text => this.setState({ number: text })}
+            onChangeText={text => this.setState({ nick_two: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="default"
             placeholder="Apodo referencia"
           />
           <TextInput
             style={styles.rowInput}
-            onChangeText={text => this.setState({ number: text })}
+            onChangeText={text => this.setState({ ref_two: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="phone-pad"
             placeholder="Número de referencia"
+            maxLength={10}
           />
         </View>
         <View style={styles.rowContainer}>
           <TextInput
             style={styles.rowInput}
-            onChangeText={text => this.setState({ number: text })}
+            onChangeText={text => this.setState({ nick_three: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="default"
             placeholder="Apodo referencia"
           />
           <TextInput
             style={styles.rowInput}
-            onChangeText={text => this.setState({ number: text })}
+            onChangeText={text => this.setState({ ref_three: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="phone-pad"
             placeholder="Número de referencia"
+            maxLength={10}
           />
         </View>
         <View style={styles.rowContainer}>
           <TextInput
             style={styles.rowInput}
-            onChangeText={text => this.setState({ number: text })}
+            onChangeText={text => this.setState({ nick_four: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="default"
             placeholder="Apodo referencia"
           />
           <TextInput
             style={styles.rowInput}
-            onChangeText={text => this.setState({ number: text })}
+            onChangeText={text => this.setState({ ref_four: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="phone-pad"
             placeholder="Número de referencia"
+            maxLength={10}
           />
         </View>
         <View style={styles.rowContainer}>
           <TextInput
             style={styles.rowInput}
-            onChangeText={text => this.setState({ number: text })}
+            onChangeText={text => this.setState({ nick_five: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="name-phone-pad"
             placeholder="Apodo referencia"
           />
           <TextInput
             style={styles.rowInput}
-            onChangeText={text => this.setState({ number: text })}
+            onChangeText={text => this.setState({ ref_five: text })}
             underlineColorAndroid="#FFF"
+            keyboardType="phone-pad"
             placeholder="Número de referencia"
+            maxLength={10}
           />
         </View>
         <View style={styles.buttonDiv}>

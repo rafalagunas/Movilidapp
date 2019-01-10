@@ -10,6 +10,7 @@ import com.facebook.soloader.SoLoader;
 
 import java.util.Arrays;
 import java.util.List;
+import com.tkporter.sendsms.SendSMSPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -21,9 +22,7 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage()
-      );
+      return Arrays.<ReactPackage>asList(new MainReactPackage(), SendSMSPackage.getInstance());
     }
 
     @Override

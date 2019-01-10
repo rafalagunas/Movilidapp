@@ -1,13 +1,15 @@
 import React, { Component } from "react";
+
 import {
   StyleSheet,
   View,
   TextInput,
   Text,
   TouchableOpacity,
-  Slider
+  Slider,
+  AsyncStorage
 } from "react-native";
-
+import SendSMS from "react-native-sms";
 class Taxi extends Component {
   constructor(props) {
     super(props);
@@ -21,17 +23,46 @@ class Taxi extends Component {
   static navigationOptions = {
     title: "Taxi"
   };
-  taxiSection = () => {
-    this.props.navigation.navigate("Home");
+  smsButton = () => {
+    this.getPhone();
   };
 
-  busSection = () => {
-    this.props.navigation.navigate("Type");
+  getPhone = async () => {
+    try {
+      let actualUser = await AsyncStorage.getItem("actualUser");
+      let response = await AsyncStorage.getItem(actualUser);
+      if (response) {
+        let response_parsed = JSON.parse(response);
+        let one = response_parsed.ref_one;
+        let two = response_parsed.ref_two;
+        SendSMS.send(
+          {
+            //Message body
+            body: "Holaa",
+            //Recipients Number
+            recipients: ["9981517450"],
+            //An array of types that would trigger a "completed" response when using android
+            successTypes: ["sent", "queued"],
+            allowAndroidSendWithoutReadPermission: true
+          },
+          (completed, cancelled, error) => {
+            if (completed) {
+              console.log("SMS Sent Completed");
+            } else if (cancelled) {
+              console.log("SMS Sent Cancelled");
+            } else if (error) {
+              console.log("Some error occured");
+            }
+          }
+        );
+      }
+    } catch (error) {
+      alert(error);
+    }
   };
+  serviceButton = () => {};
 
-  vanSection = () => {
-    this.props.navigation.navigate("Type");
-  };
+  alertButton = () => {};
 
   render() {
     const { navigate } = this.props.navigation;
@@ -45,6 +76,7 @@ class Taxi extends Component {
             onChangeText={text => this.setState({ number: text })}
             underlineColorAndroid="#FFF"
             placeholder="Número de taxi"
+            maxLength={5}
           />
           <View style={styles.rowContainer}>
             <View style={{ marginLeft: "5%" }}>
@@ -111,19 +143,19 @@ class Taxi extends Component {
           <View style={styles.rowContainer}>
             <TouchableOpacity
               style={styles.buttonSms}
-              onPress={() => this.taxiSection()}
+              onPress={() => this.smsButton()}
             >
               <Text style={styles.buttonText}>SMS</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonService}
-              onPress={() => this.taxiSection()}
+              onPress={() => this.serviceButton()}
             >
               <Text style={styles.buttonText}> SERVICIO</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonAlert}
-              onPress={() => this.taxiSection()}
+              onPress={() => this.alertButton()}
             >
               <Text style={styles.buttonText}>ALERTA</Text>
             </TouchableOpacity>

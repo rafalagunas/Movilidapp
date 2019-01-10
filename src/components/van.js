@@ -45,6 +45,7 @@ class Van extends Component {
             onChangeText={text => this.setState({ number: text })}
             underlineColorAndroid="#FFF"
             placeholder="Número de van"
+            maxLength={5}
           />
           <TextInput
             style={styles.inputText}
