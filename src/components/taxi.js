@@ -23,12 +23,12 @@ async function requestLocationPermission() {
       }
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      alert("You can use the location");
+      console.log("You can use the location");
     } else {
-      alert("Location permission denied");
+      console.log("Location permission denied");
     }
   } catch (err) {
-    alert(error);
+    console.log(error);
   }
 }
 class Taxi extends Component {
@@ -78,6 +78,9 @@ class Taxi extends Component {
         let response_parsed = JSON.parse(response);
         let one = response_parsed.ref_one;
         let two = response_parsed.ref_two;
+        let three = response_parsed.ref_three;
+        let four = response_parsed.ref_four;
+        let five = response_parsed.ref_five;
 
         if (this.state.latitude) {
           SendSMS.send(
@@ -90,7 +93,7 @@ class Taxi extends Component {
                 "," +
                 this.state.longitude,
               //Recipients Number
-              recipients: ["9981517450"],
+              recipients: [one, two, three, four, five],
               //An array of types that would trigger a "completed" response when using android
               successTypes: ["sent", "queued"],
               allowAndroidSendWithoutReadPermission: true
@@ -131,7 +134,7 @@ class Taxi extends Component {
           <TextInput
             style={styles.inputText}
             onChangeText={text => this.setState({ number: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             placeholder="Número de taxi"
             maxLength={5}
           />
@@ -187,11 +190,13 @@ class Taxi extends Component {
             <TextInput
               style={{
                 borderColor: "#000",
-                borderWidth: 1,
+                borderWidth: 3,
+                fontWeight: "bold",
                 height: "30%",
                 width: "80%",
                 justifyContent: "center"
               }}
+              underlineColorAndroid="#f4a40a"
               onChangeText={text => this.setState({ comentario: text })}
               multiline={true}
               placeholder="Redacta tu comentario."
@@ -230,7 +235,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    backgroundColor: "#FFF"
+    backgroundColor: "#f4a40a"
   },
   title: {
     marginTop: "10%",
@@ -262,7 +267,8 @@ const styles = StyleSheet.create({
     width: "40%",
     marginLeft: "5%",
     marginTop: "3%",
-    borderWidth: 1,
+    borderWidth: 3,
+    fontWeight: "bold",
     borderColor: "#000"
   },
   buttonDiv: {
@@ -274,7 +280,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffc701",
     padding: 10,
     width: "25%",
-
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#FFF",
     justifyContent: "center",
     borderRadius: 10
   },
@@ -282,6 +290,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#022a31",
     padding: 10,
     width: "25%",
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#FFF",
     color: "#FFF",
     justifyContent: "center",
     borderRadius: 10
@@ -292,7 +303,10 @@ const styles = StyleSheet.create({
     width: "25%",
 
     justifyContent: "center",
-    borderRadius: 10
+    borderRadius: 10,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#FFF"
   },
   buttonText: {
     color: "#FFF",

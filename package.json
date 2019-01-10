@@ -13,6 +13,7 @@
     "react-native": "0.52.0",
     "react-native-maps": "^0.22.1",
     "react-native-phone-call": "^1.0.9",
+    "react-native-select-contact": "^1.1.1",
     "react-native-sms": "^1.8.0",
     "react-native-sms-android": "^0.4.1",
     "react-navigation": "^1.0.0-beta.27",

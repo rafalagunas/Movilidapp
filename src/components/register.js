@@ -6,9 +6,29 @@ import {
   Text,
   TouchableOpacity,
   AsyncStorage,
-  Alert
+  Alert,
+  Image
 } from "react-native";
-
+import { selectContactPhone } from "react-native-select-contact";
+import logo from "../images/add.png";
+async function requestLocationPermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+      {
+        title: "Location Permission",
+        message: "This app needs access to your location"
+      }
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log("You can use the location");
+    } else {
+      console.log("Location permission denied");
+    }
+  } catch (err) {
+    console.log(error);
+  }
+}
 class Register extends Component {
   constructor(props) {
     super(props);
@@ -31,6 +51,24 @@ class Register extends Component {
   static navigationOptions = {
     title: "Registro"
   };
+  getPhoneNumber = () => {
+    return selectContactPhone().then(selection => {
+      if (!selection) {
+        return null;
+      }
+
+      let { contact, selectedPhone } = selection;
+      console.log(
+        `Selected ${selectedPhone.type} phone number ${
+          selectedPhone.number
+        } from ${contact.name}`
+      );
+      return selectedPhone.number;
+    });
+  };
+  componentDidMount() {
+    //requestLocationPermission();
+  }
   registerMe = () => {
     let phone = this.state.number;
     let password = this.state.pass;
@@ -103,7 +141,7 @@ class Register extends Component {
           <TextInput
             style={styles.inputText}
             onChangeText={text => this.setState({ number: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="phone-pad"
             placeholder="Número"
             maxLength={10}
@@ -111,7 +149,7 @@ class Register extends Component {
           <TextInput
             style={styles.inputText}
             onChangeText={text => this.setState({ pass: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="visible-password"
             placeholder="Contraseña"
           />
@@ -120,14 +158,14 @@ class Register extends Component {
           <TextInput
             style={styles.rowInput}
             onChangeText={text => this.setState({ nick_one: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="default"
             placeholder="Apodo referencia"
           />
           <TextInput
             style={styles.rowInput}
             onChangeText={text => this.setState({ ref_one: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="phone-pad"
             placeholder="Número de referencia"
             maxLength={10}
@@ -137,14 +175,14 @@ class Register extends Component {
           <TextInput
             style={styles.rowInput}
             onChangeText={text => this.setState({ nick_two: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="default"
             placeholder="Apodo referencia"
           />
           <TextInput
             style={styles.rowInput}
             onChangeText={text => this.setState({ ref_two: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="phone-pad"
             placeholder="Número de referencia"
             maxLength={10}
@@ -154,14 +192,14 @@ class Register extends Component {
           <TextInput
             style={styles.rowInput}
             onChangeText={text => this.setState({ nick_three: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="default"
             placeholder="Apodo referencia"
           />
           <TextInput
             style={styles.rowInput}
             onChangeText={text => this.setState({ ref_three: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="phone-pad"
             placeholder="Número de referencia"
             maxLength={10}
@@ -171,14 +209,14 @@ class Register extends Component {
           <TextInput
             style={styles.rowInput}
             onChangeText={text => this.setState({ nick_four: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="default"
             placeholder="Apodo referencia"
           />
           <TextInput
             style={styles.rowInput}
             onChangeText={text => this.setState({ ref_four: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="phone-pad"
             placeholder="Número de referencia"
             maxLength={10}
@@ -188,14 +226,14 @@ class Register extends Component {
           <TextInput
             style={styles.rowInput}
             onChangeText={text => this.setState({ nick_five: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="name-phone-pad"
             placeholder="Apodo referencia"
           />
           <TextInput
             style={styles.rowInput}
             onChangeText={text => this.setState({ ref_five: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="phone-pad"
             placeholder="Número de referencia"
             maxLength={10}
@@ -221,7 +259,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    backgroundColor: "#FFF"
+    backgroundColor: "#f4a40a"
   },
   title: {
     marginTop: "10%",
@@ -244,15 +282,33 @@ const styles = StyleSheet.create({
     height: 50,
     width: "40%",
     padding: 10,
-    borderWidth: 1,
-    borderColor: "#000"
+    marginLeft: 5,
+    borderWidth: 3,
+    borderColor: "#000",
+    fontWeight: "bold"
   },
+  contactButton: {
+    height: 50,
+    width: 60,
+    backgroundColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: "#000",
+    borderRadius: 0
+  },
+  contactButtonText: {
+    color: "#FFF"
+  },
+
   inputText: {
     height: 50,
     width: "80%",
     alignSelf: "center",
-    borderWidth: 1,
-    borderColor: "#000"
+    borderWidth: 3,
+    marginTop: 5,
+    color: "#000",
+    borderColor: "#000",
+    fontWeight: "bold"
   },
   buttonDiv: {
     marginTop: "5%"
@@ -265,3 +321,10 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: "#FFF", fontSize: 20, fontWeight: "bold" }
 });
+
+/* <TouchableOpacity
+            style={styles.contactButton}
+            onPress={() => this.getPhoneNumber()}
+          >
+            <Image style={{ width: 50, height: 30 }} source={logo} />
+          </TouchableOpacity>*/

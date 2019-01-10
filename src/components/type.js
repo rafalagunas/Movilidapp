@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    backgroundColor: "#FFF"
+    backgroundColor: "#f4a40a"
   },
   title: {
     marginTop: "10%",
@@ -124,7 +124,9 @@ const styles = StyleSheet.create({
     width: "50%",
     alignSelf: "center",
     justifyContent: "center",
-    borderRadius: 10
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#FFF"
   },
   buttonText: {
     color: "#FFF",

@@ -18,9 +18,13 @@ class Login extends Component {
     };
   }
   componentDidMount = async () => {
-    AsyncStorage.removeItem("actualUser");
-    // let actual = await AsyncStorage.getItem("actualUser");
-    //  alert(actual);
+    //AsyncStorage.removeItem("actualUser");
+    let actual = await AsyncStorage.getItem("actualUser");
+    if (actual) {
+      this.props.navigation.navigate("Type");
+    } else {
+      this.props.navigation.navigate("Login");
+    }
   };
 
   static navigationOptions = {
@@ -65,7 +69,6 @@ class Login extends Component {
   render() {
     const { navigate } = this.props.navigation;
 
-    AsyncStorage.removeItem("actualUser");
     return (
       <View style={styles.container}>
         <Text style={styles.title}> LOGIN MOVILIDAPP</Text>
@@ -73,7 +76,7 @@ class Login extends Component {
           <TextInput
             style={styles.inputText}
             onChangeText={text => this.setState({ number: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="phone-pad"
             placeholder="Número"
             maxLength={10}
@@ -81,7 +84,7 @@ class Login extends Component {
           <TextInput
             style={styles.inputText}
             onChangeText={text => this.setState({ pass: text })}
-            underlineColorAndroid="#FFF"
+            underlineColorAndroid="#f4a40a"
             keyboardType="visible-password"
             placeholder="Contraseña"
           />
@@ -111,7 +114,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    backgroundColor: "#FFF"
+    backgroundColor: "#f4a40a"
   },
   title: {
     marginTop: "10%",
@@ -141,8 +144,11 @@ const styles = StyleSheet.create({
     height: 50,
     width: "80%",
     alignSelf: "center",
-    borderWidth: 1,
-    borderColor: "#000"
+    borderWidth: 3,
+    marginTop: 5,
+    color: "#000",
+    borderColor: "#000",
+    fontWeight: "bold"
   },
   buttonDiv: {
     marginTop: "5%"
