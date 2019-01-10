@@ -1,13 +1,34 @@
 import React, { Component } from "react";
+
 import {
   StyleSheet,
   View,
   TextInput,
   Text,
   TouchableOpacity,
-  Slider
+  Slider,
+  AsyncStorage
 } from "react-native";
-
+import call from "react-native-phone-call";
+import SendSMS from "react-native-sms";
+async function requestLocationPermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: "Location Permission",
+        message: "This app needs access to your location"
+      }
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      alert("You can use the location");
+    } else {
+      alert("Location permission denied");
+    }
+  } catch (err) {
+    alert(error);
+  }
+}
 class Van extends Component {
   constructor(props) {
     super(props);
@@ -15,22 +36,84 @@ class Van extends Component {
       number: "",
       unit_value: 0,
       service_value: 0,
-      comentario: ""
+      comentario: "",
+      latitude: "",
+      longitude: ""
     };
   }
   static navigationOptions = {
     title: "VAN"
   };
-  taxiSection = () => {
-    this.props.navigation.navigate("Home");
+  componentDidMount() {
+    requestLocationPermission();
+    navigator.geolocation.watchPosition(
+      position => {
+        this.setState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        });
+      },
+      error => this.setState({ error: error.message }),
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 1000,
+        distanceFilter: 10
+      }
+    );
+  }
+  smsButton = () => {
+    this.getPhone();
   };
 
-  busSection = () => {
-    this.props.navigation.navigate("Type");
+  getPhone = async () => {
+    try {
+      let actualUser = await AsyncStorage.getItem("actualUser");
+      let response = await AsyncStorage.getItem(actualUser);
+      if (response) {
+        let response_parsed = JSON.parse(response);
+        let one = response_parsed.ref_one;
+        let two = response_parsed.ref_two;
+        if (this.state.latitude) {
+          SendSMS.send(
+            {
+              //Message body
+              body:
+                "Hola, mi ubicación es" +
+                " https://www.google.com.mx/maps/@" +
+                this.state.latitude +
+                "," +
+                this.state.longitude,
+              //Recipients Number
+              recipients: ["9981517450"],
+              //An array of types that would trigger a "completed" response when using android
+              successTypes: ["sent", "queued"],
+              allowAndroidSendWithoutReadPermission: true
+            },
+            (completed, cancelled, error) => {
+              if (completed) {
+                console.log("SMS Sent Completed");
+              } else if (cancelled) {
+                console.log("SMS Sent Cancelled");
+              } else if (error) {
+                console.log("Some error occured");
+              }
+            }
+          );
+        }
+      }
+    } catch (error) {
+      alert(error);
+    }
   };
+  serviceButton = () => {};
 
-  vanSection = () => {
-    this.props.navigation.navigate("Type");
+  alertButton = () => {
+    const args = {
+      number: "911", // String value with the number to call
+      prompt: true // Optional boolean property. Determines if the user should be prompt prior to the call
+    };
+    call(args).catch(console.error);
   };
 
   render() {
@@ -118,19 +201,19 @@ class Van extends Component {
           <View style={styles.rowContainer}>
             <TouchableOpacity
               style={styles.buttonSms}
-              onPress={() => this.taxiSection()}
+              onPress={() => this.smsButton()}
             >
               <Text style={styles.buttonText}>SMS</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonService}
-              onPress={() => this.taxiSection()}
+              onPress={() => this.serviceButton()}
             >
               <Text style={styles.buttonText}> SERVICIO</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonAlert}
-              onPress={() => this.taxiSection()}
+              onPress={() => this.alertButton()}
             >
               <Text style={styles.buttonText}>ALERTA</Text>
             </TouchableOpacity>

@@ -7,9 +7,30 @@ import {
   Text,
   TouchableOpacity,
   Slider,
-  AsyncStorage
+  AsyncStorage,
+  PermissionsAndroid
 } from "react-native";
+import call from "react-native-phone-call";
 import SendSMS from "react-native-sms";
+
+async function requestLocationPermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: "Location Permission",
+        message: "This app needs access to your location"
+      }
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      alert("You can use the location");
+    } else {
+      alert("Location permission denied");
+    }
+  } catch (err) {
+    alert(error);
+  }
+}
 class Taxi extends Component {
   constructor(props) {
     super(props);
@@ -17,12 +38,34 @@ class Taxi extends Component {
       number: "",
       unit_value: 0,
       service_value: 0,
-      comentario: ""
+      comentario: "",
+      mapRegion: null,
+      latitude: "",
+      longitude: ""
     };
   }
   static navigationOptions = {
     title: "Taxi"
   };
+
+  componentDidMount() {
+    requestLocationPermission();
+    navigator.geolocation.watchPosition(
+      position => {
+        this.setState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        });
+      },
+      error => this.setState({ error: error.message }),
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 1000,
+        distanceFilter: 10
+      }
+    );
+  }
   smsButton = () => {
     this.getPhone();
   };
@@ -35,26 +78,34 @@ class Taxi extends Component {
         let response_parsed = JSON.parse(response);
         let one = response_parsed.ref_one;
         let two = response_parsed.ref_two;
-        SendSMS.send(
-          {
-            //Message body
-            body: "Holaa",
-            //Recipients Number
-            recipients: ["9981517450"],
-            //An array of types that would trigger a "completed" response when using android
-            successTypes: ["sent", "queued"],
-            allowAndroidSendWithoutReadPermission: true
-          },
-          (completed, cancelled, error) => {
-            if (completed) {
-              console.log("SMS Sent Completed");
-            } else if (cancelled) {
-              console.log("SMS Sent Cancelled");
-            } else if (error) {
-              console.log("Some error occured");
+
+        if (this.state.latitude) {
+          SendSMS.send(
+            {
+              //Message body
+              body:
+                "Hola, mi ubicación es" +
+                " https://www.google.com.mx/maps/@" +
+                this.state.latitude +
+                "," +
+                this.state.longitude,
+              //Recipients Number
+              recipients: ["9981517450"],
+              //An array of types that would trigger a "completed" response when using android
+              successTypes: ["sent", "queued"],
+              allowAndroidSendWithoutReadPermission: true
+            },
+            (completed, cancelled, error) => {
+              if (completed) {
+                console.log("SMS Sent Completed");
+              } else if (cancelled) {
+                console.log("SMS Sent Cancelled");
+              } else if (error) {
+                console.log("Some error occured");
+              }
             }
-          }
-        );
+          );
+        }
       }
     } catch (error) {
       alert(error);
@@ -62,7 +113,13 @@ class Taxi extends Component {
   };
   serviceButton = () => {};
 
-  alertButton = () => {};
+  alertButton = () => {
+    const args = {
+      number: "911", // String value with the number to call
+      prompt: true // Optional boolean property. Determines if the user should be prompt prior to the call
+    };
+    call(args).catch(console.error);
+  };
 
   render() {
     const { navigate } = this.props.navigation;
