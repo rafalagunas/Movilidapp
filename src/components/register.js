@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {
   StyleSheet,
+  ScrollView,
   View,
   TextInput,
   Text,
@@ -9,8 +10,10 @@ import {
   Alert,
   Image
 } from "react-native";
+import axios from "../routing";
 import { selectContactPhone } from "react-native-select-contact";
 import logo from "../images/add.png";
+
 async function requestLocationPermission() {
   try {
     const granted = await PermissionsAndroid.request(
@@ -69,6 +72,7 @@ class Register extends Component {
   componentDidMount() {
     //requestLocationPermission();
   }
+
   registerMe = () => {
     let phone = this.state.number;
     let password = this.state.pass;
@@ -94,32 +98,44 @@ class Register extends Component {
 
     //this.props.navigation.navigate("Type");
     if (reference_one) {
-      fetch("https://coderscave-prueba.000webhostapp.com/save-account.php", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "text/html"
-        },
-        body: JSON.stringify({
-          number: phone,
-          pass: password,
-          ref_one: reference_one,
-          ref_two: reference_two,
-          ref_three: reference_three,
-          ref_four: reference_four,
-          ref_five: reference_five
-        })
-      })
-        .then(response => response.json())
-        .catch(e => {
-          throw e;
-        });
-
+      this.signUp(user);
       this.returnData(users);
     } else {
       Alert.alert("ERROR", "COMPLETA TODOS LOS CAMPOS");
     }
   };
+
+  signUp = user => {
+    axios.post("user/register", {
+      numero:       user.phone,
+      contrasena:   user.password,
+      referencia_1: user.reference_one,
+      numero_1:     user.phone_one,
+      referencia_2: user.reference_two,
+      numero_2:     user.phone_two,
+      referencia_3: user.reference_three,
+      numero_3:     user.phone_three,
+      referencia_4: user.reference_four,
+      numero_4:     user.phone_four,
+      referencia_5: user.reference_five,
+      numero_5:     user.phone_five,
+    })
+      .then(response => {
+        // TODO Store api_token somewhere secure. Successful registration.
+      })
+      .catch(e => {
+        if (error.response.status == 422) {
+          // TODO Missing fields.
+        } else if (error.response) {
+          // TODO Unexpected error received.
+        } else if (error.request) {
+          // TODO No response received.
+        } else {
+          // TODO Request was not made. Possibly, there is no internet
+          // connection available.
+        }
+      });
+  }
 
   returnData = async () => {
     let phone = this.state.number;
@@ -135,7 +151,7 @@ class Register extends Component {
     const { navigate } = this.props.navigation;
 
     return (
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}> REGISTRO MOVILIDAPP</Text>
         <View style={styles.formContainer}>
           <TextInput
@@ -247,7 +263,7 @@ class Register extends Component {
             <Text style={styles.buttonText}>¡REGISTRARME!</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -256,8 +272,9 @@ export default Register;
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    height: "100%",
+    // Remove to ensure that the view is Scrollable.
+    // width: "100%",
+    // height: "100%",
     alignItems: "center",
     backgroundColor: "#f4a40a"
   },

@@ -8,6 +8,7 @@ import {
   AsyncStorage,
   Alert
 } from "react-native";
+import axios from "./routing";
 
 class Login extends Component {
   constructor(props) {
@@ -17,6 +18,7 @@ class Login extends Component {
       pass: ""
     };
   }
+
   componentDidMount = async () => {
     //AsyncStorage.removeItem("actualUser");
     let actual = await AsyncStorage.getItem("actualUser");
@@ -30,42 +32,41 @@ class Login extends Component {
   static navigationOptions = {
     header: null
   };
+
   registerMe = () => {
     AsyncStorage.removeItem("actualUser");
     this.props.navigation.navigate("Register");
   };
 
   login = () => {
-    AsyncStorage.removeItem("actualUser");
-    let phone = this.state.number;
-
-    this.returnData(phone);
+    let user = {phone: this.state.number, password: this.state.pass};
+    loginRequest(user);
   };
 
-  returnData = async phone => {
-    try {
-      let response = await AsyncStorage.getItem(phone);
-
-      if (response) {
-        let response_parsed = JSON.parse(response);
-
-        if (response_parsed.pass === this.state.pass) {
-          AsyncStorage.setItem("actualUser", response_parsed.phone);
-          // let actualUser = await AsyncStorage.getItem("actualUser");
-          this.props.navigation.navigate("Type");
+  loginRequest = (user) => {
+    axios.post("user/login", {
+      numero:     user.phone,
+      contrasena: user.password,
+    })
+      .then(response => {
+        // TODO Store api_token somewhere secure. Successful login.
+        this.props.navigation.navigate("Type");
+      })
+      .catch(e => {
+        // TODO Add error.response.status for invalid user/pass.
+        if (error.response.status == 422) {
+          // TODO Missing fields.
+        } else if (error.response) {
+          // TODO Unexpected error received.
+        } else if (error.request) {
+          // TODO No response received.
         } else {
-          Alert.alert(
-            "ERROR",
-            "USUARIO O CONTRASEÑA NO COINCIDEN O NO EXISTEN "
-          );
+          // TODO Request was not made. Possibly, there is no internet
+          // connection available.
         }
-      } else {
-        Alert.alert("ERROR", "USUARIO O CONTRASEÑA NO COINCIDEN O NO EXISTEN ");
-      }
-    } catch (error) {
-      alert(error);
-    }
-  };
+      });
+  }
+
   render() {
     const { navigate } = this.props.navigation;
 
