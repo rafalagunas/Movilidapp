@@ -10,8 +10,8 @@ import {
   Alert,
   Image
 } from "react-native";
-import axios from "../routing";
 import { selectContactPhone } from "react-native-select-contact";
+import axios from "../routing";
 import logo from "../images/add.png";
 
 async function requestLocationPermission() {
@@ -32,6 +32,7 @@ async function requestLocationPermission() {
     console.log(error);
   }
 }
+
 class Register extends Component {
   constructor(props) {
     super(props);
@@ -51,9 +52,11 @@ class Register extends Component {
       ref_five: ""
     };
   }
+
   static navigationOptions = {
     title: "Registro"
   };
+
   getPhoneNumber = () => {
     return selectContactPhone().then(selection => {
       if (!selection) {
@@ -69,35 +72,32 @@ class Register extends Component {
       return selectedPhone.number;
     });
   };
+
   componentDidMount() {
     //requestLocationPermission();
   }
 
   registerMe = () => {
-    let phone = this.state.number;
-    let password = this.state.pass;
-    let name = this.state.name;
-    let reference_one = this.state.ref_one;
-    let reference_two = this.state.ref_two;
-    let reference_three = this.state.ref_three;
-    let reference_four = this.state.ref_four;
-    let reference_five = this.state.ref_five;
-
     const user = {
-      phone: phone,
-      name: name,
-      pass: password,
-      ref_one: reference_one,
-      ref_two: reference_two,
-      ref_three: reference_three,
-      ref_four: reference_four,
-      ref_five: reference_five
+      phone:      this.state.number,
+      name:       this.state.name,
+      pass:       this.state.pass,
+      ref_one:    this.state.ref_one,
+      ref_two:    this.state.ref_two,
+      ref_three:  this.state.ref_three,
+      ref_four:   this.state.ref_four,
+      ref_five:   this.state.ref_five,
+      nick_one:   this.state.nick_one,
+      nick_two:   this.state.nick_two,
+      nick_three: this.state.nick_three,
+      nick_four:  this.state.nick_four,
+      nick_five:  this.state.nick_five
     };
-    AsyncStorage.removeItem(phone);
-    let users = AsyncStorage.setItem(phone, JSON.stringify(user));
 
-    //this.props.navigation.navigate("Type");
-    if (reference_one) {
+    AsyncStorage.removeItem(user.phone);
+    let users = AsyncStorage.setItem(user.phone, JSON.stringify(user));
+
+    if (user.ref_one && user.nick_one) {
       this.signUp(user);
       this.returnData(users);
     } else {
@@ -109,30 +109,29 @@ class Register extends Component {
     axios.post("user/register", {
       numero:       user.phone,
       contrasena:   user.password,
-      referencia_1: user.reference_one,
-      numero_1:     user.phone_one,
-      referencia_2: user.reference_two,
-      numero_2:     user.phone_two,
-      referencia_3: user.reference_three,
-      numero_3:     user.phone_three,
-      referencia_4: user.reference_four,
-      numero_4:     user.phone_four,
-      referencia_5: user.reference_five,
-      numero_5:     user.phone_five,
+      referencia_1: user.nick_one,
+      referencia_2: user.nick_two,
+      referencia_3: user.nick_three,
+      referencia_4: user.nick_four,
+      referencia_5: user.nick_five,
+      numero_1:     user.ref_one,
+      numero_2:     user.ref_two,
+      numero_3:     user.ref_three,
+      numero_4:     user.ref_four,
+      numero_5:     user.ref_five
     })
       .then(response => {
         // TODO Store api_token somewhere secure. Successful registration.
       })
       .catch(e => {
         if (error.response.status == 422) {
-          // TODO Missing fields.
+          Alert.alert("Error", "Completa todos los campos.");
         } else if (error.response) {
-          // TODO Unexpected error received.
+          Alert.alert("Error", "Ha sucedido un error inesperado. Vuelve a intentar, o comunícate con soporte.");
         } else if (error.request) {
-          // TODO No response received.
+          Alert.alert("Error", "No se recibió información del servidor.");
         } else {
-          // TODO Request was not made. Possibly, there is no internet
-          // connection available.
+          Alert.alert("Error", "No se pudo iniciar sesión. Verifica que estés conectado a internet, y vuelve a intentar.");
         }
       });
   }

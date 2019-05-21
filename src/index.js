@@ -55,14 +55,13 @@ class Login extends Component {
       .catch(e => {
         // TODO Add error.response.status for invalid user/pass.
         if (error.response.status == 422) {
-          // TODO Missing fields.
+          Alert.alert("Error", "Completa todos los campos.");
         } else if (error.response) {
-          // TODO Unexpected error received.
+          Alert.alert("Error", "Ha sucedido un error inesperado. Vuelve a intentar, o comunícate con soporte.");
         } else if (error.request) {
-          // TODO No response received.
+          Alert.alert("Error", "No se recibió información del servidor.");
         } else {
-          // TODO Request was not made. Possibly, there is no internet
-          // connection available.
+          Alert.alert("Error", "No se pudo iniciar sesión. Verifica que estés conectado a internet, y vuelve a intentar.");
         }
       });
   }
